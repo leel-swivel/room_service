@@ -27,4 +27,5 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
+    - name: Execute Jar File
+      run: sudo kill -9 `sudo lsof -t -i:8083` & sudo java -jar /home/ubuntu/actions-runner/_work/room_service/room_service/target/room-service-1.0-SNAPSHOT.jar &
