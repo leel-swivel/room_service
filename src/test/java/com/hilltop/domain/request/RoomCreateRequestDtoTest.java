@@ -27,7 +27,7 @@ class RoomCreateRequestDtoTest {
     void Should_ReturnTrue_When_ToStringMethodReturnsValue(){
         RoomCreateRequestDto sampleHotelCreateRequest = getSampleHotelCreateRequest();
         String sampleHotelCreateRequestToString = sampleHotelCreateRequestToString();
-        assertTrue(sampleHotelCreateRequest.toLogJson().equals(sampleHotelCreateRequestToString));
+        assertEquals(sampleHotelCreateRequest.toLogJson(), sampleHotelCreateRequestToString);
     }
 
     private String sampleHotelCreateRequestToString() {
