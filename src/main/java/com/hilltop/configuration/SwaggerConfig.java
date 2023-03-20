@@ -32,7 +32,7 @@ public class SwaggerConfig {
     //Api information
     private ApiInfo generateAPIInfo() {
         return new ApiInfo("Room Service", "Implementing Swagger with SpringBoot Application", "1.0.0",
-                "", getContacts(), "", "", new ArrayList());
+                "", getContacts(), "", "", new ArrayList<>());
     }
 
     // Developer Contacts
