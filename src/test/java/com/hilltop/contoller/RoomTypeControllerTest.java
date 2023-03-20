@@ -2,6 +2,8 @@ package com.hilltop.contoller;
 
 import com.hilltop.configuration.Translator;
 import com.hilltop.domain.request.RoomTypeCreateRequestDto;
+import com.hilltop.exception.RoomServiceException;
+import com.hilltop.model.RoomType;
 import com.hilltop.service.RoomTypeService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,13 +41,25 @@ class RoomTypeControllerTest {
     void tearDown() {
     }
 
-//    @Test
+    @Test
     void Should_ReturnOk_When_CreatingARoomType() throws Exception {
+        RoomType sampleRoomType = getSampleRoomType();
         RoomTypeCreateRequestDto sampleRoomTypeCreateRequestDto = getSampleRoomTypeCreateRequestDto();
+        when(roomTypeService.saveRoomType(any())).thenReturn(sampleRoomType);
         mockMvc.perform(MockMvcRequestBuilders.post(CREATE_ROOM_TYPE_URL)
                         .content(sampleRoomTypeCreateRequestDto.toLogJson())
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void Should_ReturnBadRequest_When_CreatingARoomType() throws Exception {
+        RoomTypeCreateRequestDto sampleRoomTypeCreateRequestDto = getSampleRoomTypeCreateRequestDto();
+        doThrow(new RoomServiceException("ERROR")).when(roomTypeService).saveRoomType(any());
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_ROOM_TYPE_URL)
+                        .content(sampleRoomTypeCreateRequestDto.toLogJson())
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
     }
 
 
@@ -51,5 +68,9 @@ class RoomTypeControllerTest {
         roomTypeCreateRequestDto.setRoomType("ONLY_BED");
         roomTypeCreateRequestDto.setPricePerNight(BigDecimal.valueOf(5000.00));
         return roomTypeCreateRequestDto;
+    }
+
+    private RoomType getSampleRoomType(){
+        return new RoomType("rtid-ge35","Room_Only",BigDecimal.valueOf(2));
     }
 }

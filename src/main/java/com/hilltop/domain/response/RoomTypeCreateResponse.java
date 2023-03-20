@@ -1,7 +1,9 @@
 package com.hilltop.domain.response;
 
 import com.hilltop.model.RoomType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -11,6 +13,8 @@ import java.math.BigDecimal;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RoomTypeCreateResponse extends ResponseDto {
     private String id;
     private String roomType;

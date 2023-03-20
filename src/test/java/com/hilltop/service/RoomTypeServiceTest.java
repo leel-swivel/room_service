@@ -70,7 +70,6 @@ class RoomTypeServiceTest {
         assertEquals("Invalid room type id: " + ROOM_TYPE_ID, invalidRoomTypeException.getMessage());
     }
 
-
     private RoomTypeCreateRequestDto getSampleRoomTypeCreateRequestDto() {
         RoomTypeCreateRequestDto roomTypeCreateRequestDto = new RoomTypeCreateRequestDto();
         roomTypeCreateRequestDto.setRoomType("ONLY_BED");

@@ -1,7 +1,9 @@
 spring:
   application:
     name: room-service
-
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/room_service?createDatabaseIfNotExist=true}
     username: ${DB_USERNAME:root}
