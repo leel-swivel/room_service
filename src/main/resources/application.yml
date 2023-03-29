@@ -5,9 +5,9 @@ spring:
     path match:
       matching-strategy: ant_path_matcher
   datasource:
-    url: ${DB_URL:jdbc:mysql://100.25.149.53:3306/room_service?createDatabaseIfNotExist=true}
-    username: ${DB_USERNAME:user}
-    password: ${DB_PASSWORD:user}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/room_service?createDatabaseIfNotExist=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -21,10 +21,10 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://54.210.130.67:8761/eureka
+      defaultZone: http://localhost:8761/eureka
 
 logging:
   level:
     com.hilltop: ${LOG_LEVEL:DEBUG}
   file:
-    path: ${LOGPATH:/home/ubuntu/logs}
+    path: ${LOGPATH:/home/leel/Desktop/logs}
