@@ -49,7 +49,7 @@ class RoomTypeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(CREATE_ROOM_TYPE_URL)
                         .content(sampleRoomTypeCreateRequestDto.toLogJson())
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test

@@ -31,8 +31,7 @@ class RoomCreateRequestDtoTest {
     }
 
     private String sampleHotelCreateRequestToString() {
-        return "{\"roomNumber\":1,\"hotelId\":\"hid-gejgka\",\"paxCount\":2,\"roomTypeId\":\"rtid-gejkge\"," +
-                "\"imageUrls\":[],\"requiredAvailable\":true}";
+        return "{\"roomNumber\":1,\"hotelId\":\"hid-gejgka\",\"paxCount\":2,\"roomTypeId\":\"rtid-gejkge\",\"imageUrls\":[],\"pricePerNight\":null,\"city\":null,\"requiredAvailable\":true}";
     }
 
     private RoomCreateRequestDto getSampleHotelCreateRequest() {
