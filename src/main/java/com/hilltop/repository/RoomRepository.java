@@ -17,5 +17,7 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     List<Room> getAllByHotelIdInAndPaxCountGreaterThanEqual(List<String> hotelIds,int paxCount);
 
+    List<Room> findByHotelId(String hotelId);
+
 
 }

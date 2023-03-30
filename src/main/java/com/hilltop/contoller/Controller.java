@@ -30,12 +30,12 @@ public class Controller {
      * @return response entity
      */
     protected ResponseEntity<ResponseWrapper> getSuccessResponse(ResponseDto responseDto,
-                                                                 SuccessResponseStatusType successResponseStatusType) {
+                                                                 SuccessResponseStatusType successResponseStatusType, HttpStatus httpStatus) {
 
         var successResponseWrapper = new SuccessResponseWrapper(ResponseStatusType.SUCCESS,
                 successResponseStatusType, responseDto,
-                translator.toLocale(successResponseStatusType.getCodeString(successResponseStatusType.getCode())));
-        return new ResponseEntity<>(successResponseWrapper, HttpStatus.OK);
+                translator.toLocale(successResponseStatusType.getCodeString(successResponseStatusType.getCode())), httpStatus);
+        return new ResponseEntity<>(successResponseWrapper, httpStatus);
     }
 
     /**

@@ -18,17 +18,17 @@ public class RoomResponseDto extends ResponseDto {
     private int roomNumber;
     private String hotelId;
     private String roomTypeName;
-    private BigDecimal pricePerNight;
     private int paxCount;
     private List<String> imageUrls;
+    private BigDecimal cost;
 
     public RoomResponseDto(Room room) {
         this.id = room.getId();
         this.roomNumber = room.getRoomNumber();
         this.hotelId = room.getHotelId();
         this.roomTypeName = room.getRoomType().getName();
-        this.pricePerNight = room.getRoomType().getPricePerNight();
         this.paxCount = room.getPaxCount();
         this.imageUrls = room.getImageUrls();
+        cost = room.getCost();
     }
 }

@@ -1,5 +1,6 @@
 package com.hilltop.service;
 
+import com.hilltop.domain.request.HotelIdRequestDto;
 import com.hilltop.domain.request.RoomCreateRequestDto;
 import com.hilltop.domain.request.RoomTypeCreateRequestDto;
 import com.hilltop.domain.response.RoomCreateResponseDto;
@@ -12,17 +13,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -143,6 +143,6 @@ class RoomServiceTest {
     }
 
     private RoomType getSampleRoomType() {
-        return new RoomType(new RoomTypeCreateRequestDto("rtid-vagae", BigDecimal.valueOf(5)));
+        return new RoomType(new RoomTypeCreateRequestDto("rtid-vagae", 5));
     }
 }

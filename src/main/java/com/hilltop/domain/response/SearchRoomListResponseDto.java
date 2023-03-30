@@ -13,10 +13,10 @@ public class SearchRoomListResponseDto extends ResponseDto {
 
     private List<SearchRoomResponseDto> searchRoomList;
 
-    public SearchRoomListResponseDto(List<Room> searchRoomList, int days) {
+    public SearchRoomListResponseDto(List<Room> searchRoomList) {
         var searchRoomResponseDtoList = searchRoomList
                 .stream()
-                .map(room -> new SearchRoomResponseDto(room, days))
+                .map(SearchRoomResponseDto::new)
                 .collect(Collectors.toList());
         this.searchRoomList = searchRoomResponseDtoList;
     }

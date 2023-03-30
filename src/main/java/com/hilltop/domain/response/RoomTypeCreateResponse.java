@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 /**
  * RoomTypeCreateResponse
  */
@@ -18,11 +16,9 @@ import java.math.BigDecimal;
 public class RoomTypeCreateResponse extends ResponseDto {
     private String id;
     private String roomType;
-    private BigDecimal pricePerNight;
 
     public RoomTypeCreateResponse(RoomType roomType) {
         this.id = roomType.getId();
         this.roomType = roomType.getName();
-        this.pricePerNight = roomType.getPricePerNight();
     }
 }

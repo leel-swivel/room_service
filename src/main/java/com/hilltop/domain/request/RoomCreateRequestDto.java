@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -21,6 +22,8 @@ public class RoomCreateRequestDto extends RequestDto {
     private int paxCount;
     private String roomTypeId;
     private List<String> imageUrls;
+    private BigDecimal pricePerNight;
+    private String city;
 
     @Override
     public String toLogJson() {

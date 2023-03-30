@@ -66,11 +66,10 @@ class RoomTypeControllerTest {
     private RoomTypeCreateRequestDto getSampleRoomTypeCreateRequestDto() {
         RoomTypeCreateRequestDto roomTypeCreateRequestDto = new RoomTypeCreateRequestDto();
         roomTypeCreateRequestDto.setRoomType("ONLY_BED");
-        roomTypeCreateRequestDto.setPricePerNight(BigDecimal.valueOf(5000.00));
         return roomTypeCreateRequestDto;
     }
 
     private RoomType getSampleRoomType(){
-        return new RoomType("rtid-ge35","Room_Only",BigDecimal.valueOf(2));
+        return new RoomType("rtid-ge35","Room_Only",20);
     }
 }

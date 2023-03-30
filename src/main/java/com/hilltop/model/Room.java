@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,8 @@ public class Room {
     private RoomType roomType;
     @ElementCollection
     private List<String> imageUrls;
+    private BigDecimal cost;
+    private BigDecimal pricePerNight;
     private long createdAt;
     private long updatedAt;
 
@@ -46,14 +49,22 @@ public class Room {
         this.imageUrls = roomCreateRequestDto.getImageUrls();
         this.updatedAt = System.currentTimeMillis();
         this.createdAt = System.currentTimeMillis();
+        this.cost = calculateRoomCost(roomCreateRequestDto.getPricePerNight(), roomType);
     }
 
-    public void update(RoomCreateRequestDto roomCreateRequestDto, RoomType roomType){
+    public void update(RoomCreateRequestDto roomCreateRequestDto, RoomType roomType) {
         this.roomNumber = roomCreateRequestDto.getRoomNumber();
         this.paxCount = roomCreateRequestDto.getPaxCount();
         this.hotelId = roomCreateRequestDto.getHotelId();
         this.roomType = roomType;
         this.imageUrls = roomCreateRequestDto.getImageUrls();
         this.updatedAt = System.currentTimeMillis();
+        this.cost = calculateRoomCost(roomCreateRequestDto.getPricePerNight(), roomType);
+    }
+
+    private BigDecimal calculateRoomCost(BigDecimal pricePerNight, RoomType roomType) {
+        BigDecimal markupValue = pricePerNight
+                .multiply(BigDecimal.valueOf(roomType.getMarkupPercentage() / 100));
+        return pricePerNight.add(markupValue);
     }
 }

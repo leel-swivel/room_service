@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +39,8 @@ class RoomControllerTest {
     private static final String GET_ROOM_BY_ID_URL = "/api/v1/room/{id}";
     private static final String UPDATE_ROOM_BY_ID_URL = "/api/v1/room/{id}";
     private static final String DELETE_ROOM_BY_ID_URL = "/api/v1/room/{id}";
-    private static final String GET_ROOM_LIST_FOR_HOTEL = "/api/v1/room/hotel/{hotelId}/{page}/{size}";
-    private static final String GET_HOTEL_ROOMS = "/api/v1/room/hotel/pax-count/{count}/no-of-days/{days}";
+    private static final String GET_ROOM_LIST_FOR_HOTEL = "/api/v1/room/hotel/{hotelId}/page/{page}/size/{size}";
     private static final int PAGE_NO = 0;
-    private static final int COUNT = 1;
     private static final int SIZE = 1;
     private static final int DAYS = 2;
 
@@ -68,7 +67,7 @@ class RoomControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(CREATE_ROOM_URL)
                         .content(sampleRoomCreateRequestDto.toLogJson())
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -156,23 +155,6 @@ class RoomControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
-
-    @Test
-    void Should_ReturnOk_When_ValidCountAndDaysProvidedForGetAllRoomList() throws Exception {
-        String url = GET_HOTEL_ROOMS.replace("{count}", String.valueOf(COUNT)).replace("{days}",
-                String.valueOf(COUNT));
-        Room room = generateRoom();
-        List<Room> roomList = new ArrayList<>();
-        roomList.add(room);
-        HotelIdRequestDto sampleHotelIdRequestDto = getSampleHotelIdRequestDto();
-        when(roomService.getRooms(COUNT, sampleHotelIdRequestDto)).thenReturn(roomList);
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(sampleHotelIdRequestDto.toJson())
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
     @Test
     void Should_ReturnBadRequest_When_UpdatingARoomWithoutRequiredFields() throws Exception {
         String url = UPDATE_ROOM_BY_ID_URL.replace("{id}", ROOM_ID);
@@ -190,6 +172,7 @@ class RoomControllerTest {
         roomCreateRequestDto.setRoomTypeId("rtid-gegeg-gse4gvs");
         roomCreateRequestDto.setPaxCount(5);
         roomCreateRequestDto.setRoomNumber(4);
+        roomCreateRequestDto.setPricePerNight(BigDecimal.valueOf(5000.00));
         roomCreateRequestDto.setHotelId("hid-gega3-23feg");
         roomCreateRequestDto.setImageUrls(new ArrayList<>());
         return roomCreateRequestDto;
@@ -197,7 +180,7 @@ class RoomControllerTest {
 
     private Room generateRoom() {
         RoomCreateRequestDto sampleRoomCreateRequestDto = getSampleRoomCreateRequestDto();
-        return new Room(sampleRoomCreateRequestDto, new RoomType());
+        return new Room(sampleRoomCreateRequestDto, new RoomType("id-gejakjg", "SINGLE", 52.0));
     }
 
     private Page<Room> getRoomPage() {
@@ -209,11 +192,19 @@ class RoomControllerTest {
     }
 
     private HotelIdRequestDto getSampleHotelIdRequestDto() {
-        List<String> hotelIds= new ArrayList<>();
+        List<String> hotelIds = new ArrayList<>();
         hotelIds.add("hid-gega3-23feg");
         HotelIdRequestDto hotelIdRequestDto = new HotelIdRequestDto();
         hotelIdRequestDto.setHotelIds(hotelIds);
         return hotelIdRequestDto;
     }
 
+
+//    private HotelIdRequestDto getSampleHotelIdRequestDto(){
+//        HotelIdRequestDto hotelIdRequestDto = new HotelIdRequestDto();
+//        hotelIdRequestDto.getHotelIds().add("aghejgh");
+//        hotelIdRequestDto.getHotelIds().add("aghejgh");
+//        hotelIdRequestDto.getHotelIds().add("aghejgh");
+//        return hotelIdRequestDto;
+//    }
 }

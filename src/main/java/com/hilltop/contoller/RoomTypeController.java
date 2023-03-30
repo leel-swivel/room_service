@@ -8,6 +8,7 @@ import com.hilltop.exception.RoomServiceException;
 import com.hilltop.service.RoomTypeService;
 import com.hilltop.wrapper.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +40,7 @@ public class RoomTypeController extends Controller {
         try {
             var roomTypeCreateResponseDto = roomTypeService.saveRoomType(roomTypeCreateRequestDto);
             var roomTypeCreateResponse = new RoomTypeCreateResponse(roomTypeCreateResponseDto);
-            return getSuccessResponse(roomTypeCreateResponse, SuccessResponseStatusType.CREATE_ROOM_TYPE);
+            return getSuccessResponse(roomTypeCreateResponse, SuccessResponseStatusType.CREATE_ROOM_TYPE, HttpStatus.CREATED);
         } catch (RoomServiceException e) {
             log.error("Saving room type was failed.", e);
             return getInternalServerError();

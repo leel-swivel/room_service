@@ -4,8 +4,8 @@ import com.hilltop.configuration.Translator;
 import com.hilltop.domain.request.HotelIdRequestDto;
 import com.hilltop.domain.request.RoomCreateRequestDto;
 import com.hilltop.domain.response.RoomListPageResponseDto;
+import com.hilltop.domain.response.RoomListResponseDto;
 import com.hilltop.domain.response.RoomResponseDto;
-import com.hilltop.domain.response.SearchRoomListResponseDto;
 import com.hilltop.enums.ErrorResponseStatusType;
 import com.hilltop.enums.SuccessResponseStatusType;
 import com.hilltop.exception.InvalidRoomException;
@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,7 @@ public class RoomController extends Controller {
                 return getErrorResponse(ErrorResponseStatusType.MISSING_REQUIRED_FIELDS);
             }
             var roomCreateResponseDto = roomService.saveRoom(roomCreateRequestDto);
-            return getSuccessResponse(roomCreateResponseDto, SuccessResponseStatusType.CREATE_ROOM);
+            return getSuccessResponse(roomCreateResponseDto, SuccessResponseStatusType.CREATE_ROOM, HttpStatus.CREATED);
         } catch (RoomServiceException e) {
             log.error("Saving room was failed for hotel id: {}", roomCreateRequestDto.getHotelId(), e);
             return getInternalServerError();
@@ -73,7 +74,7 @@ public class RoomController extends Controller {
         try {
             var room = roomService.getRoom(id);
             var roomResponseDto = new RoomResponseDto(room);
-            return getSuccessResponse(roomResponseDto, SuccessResponseStatusType.GET_ROOM);
+            return getSuccessResponse(roomResponseDto, SuccessResponseStatusType.GET_ROOM, HttpStatus.OK);
         } catch (InvalidRoomException e) {
             log.error("Invalid room id to get room details.");
             return getErrorResponse(ErrorResponseStatusType.INVALID_ROOM_ID);
@@ -91,7 +92,7 @@ public class RoomController extends Controller {
      * @param size    size
      * @return roomListPageResponseDto
      */
-    @GetMapping("/hotel/{hotelId}/{page}/{size}")
+    @GetMapping("/hotel/{hotelId}/page/{page}/size/{size}")
     public ResponseEntity<ResponseWrapper> getRoomListForHotel(@PathVariable String hotelId,
                                                                @Min(DEFAULT_PAGE) @PathVariable int page,
                                                                @Positive @Max(PAGE_MAX_SIZE) @PathVariable int size) {
@@ -99,7 +100,7 @@ public class RoomController extends Controller {
             Pageable pageable = PageRequest.of(page, size, Sort.by(DEFAULT_SORT).descending());
             Page<Room> roomPageByHotelId = roomService.getRoomPageByHotelId(pageable, hotelId);
             var roomListPageResponseDto = new RoomListPageResponseDto(roomPageByHotelId);
-            return getSuccessResponse(roomListPageResponseDto, SuccessResponseStatusType.ROOM_BY_HOTEL_ID);
+            return getSuccessResponse(roomListPageResponseDto, SuccessResponseStatusType.ROOM_BY_HOTEL_ID, HttpStatus.OK);
         } catch (RoomServiceException e) {
             log.error("Getting room list by hotel id was failed.", e);
             return getInternalServerError();
@@ -116,7 +117,7 @@ public class RoomController extends Controller {
     public ResponseEntity<ResponseWrapper> deleteRoom(@PathVariable String roomId) {
         try {
             roomService.deleteRoom(roomId);
-            return getSuccessResponse(null, SuccessResponseStatusType.DELETE_ROOM);
+            return getSuccessResponse(null, SuccessResponseStatusType.DELETE_ROOM, HttpStatus.OK);
         } catch (RoomServiceException e) {
             log.error("Deleting room by id was failed.", e);
             return getInternalServerError();
@@ -140,7 +141,7 @@ public class RoomController extends Controller {
             }
             Room room = roomService.updateRoom(roomId, roomCreateRequestDto);
             RoomResponseDto roomResponseDto = new RoomResponseDto(room);
-            return getSuccessResponse(roomResponseDto, SuccessResponseStatusType.UPDATE_ROOM);
+            return getSuccessResponse(roomResponseDto, SuccessResponseStatusType.UPDATE_ROOM, HttpStatus.OK);
         } catch (InvalidRoomException e) {
             log.error("Invalid room id to update room details.");
             return getErrorResponse(ErrorResponseStatusType.INVALID_ROOM_ID);
@@ -161,14 +162,15 @@ public class RoomController extends Controller {
      * @param hotelIdRequestDto hotelIdRequestDto
      * @return searchRoomListResponseDto
      */
-    @PostMapping("/hotel/pax-count/{count}/no-of-days/{days}")
-    public ResponseEntity<ResponseWrapper> getHotelRooms(@PathVariable int count,
-                                                         @PathVariable int days,
+    @PostMapping("/list-hotel-room-by")
+    public ResponseEntity<ResponseWrapper> getHotelRooms(@RequestParam int count,
+                                                         @RequestParam int days,
                                                          @RequestBody HotelIdRequestDto hotelIdRequestDto) {
         try {
-            var rooms = roomService.getRooms(count, hotelIdRequestDto);
-            var searchRoomListResponseDto = new SearchRoomListResponseDto(rooms, days);
-            return getSuccessResponse(searchRoomListResponseDto, SuccessResponseStatusType.SEARCH_ROOMS);
+            var rooms = roomService.getRoomsForPaxCountAndHotelIds(count, hotelIdRequestDto);
+            RoomListResponseDto roomListResponseDto = new RoomListResponseDto(rooms, days);
+            log.info("Successfully returned the hotel rooms for pax count :{} and day count: {} ", count, days);
+            return getSuccessResponse(roomListResponseDto, SuccessResponseStatusType.SEARCH_ROOMS, HttpStatus.OK);
         } catch (RoomServiceException e) {
             log.error("Getting rooms by id and hotel ids was failed.", e);
             return getInternalServerError();

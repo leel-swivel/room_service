@@ -13,8 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -115,18 +115,99 @@ public class RoomService {
     }
 
     /**
-     * This method used to get room for the search.
+     * This method used to get rooms by pax count and hotel ids.
+     * This method returns room list for exact pax count by iterating all hotelId list.
      *
      * @param paxCount          paxCount
      * @param hotelIdRequestDto hotelIdRequestDto
+     * @return hotel id vs room list map
+     */
+    public Map<String, List<Room>> getRoomsForPaxCountAndHotelIds(int paxCount, HotelIdRequestDto hotelIdRequestDto) {
+        try {
+            Map<String, List<Room>> hotelAndRoomsMap = new HashMap<>();
+            for (String id : hotelIdRequestDto.getHotelIds()) {
+                List<Room> rooms = getRoomsByHotelId(id);
+                List<Room> searchList = rooms
+                        .stream().filter(room -> room.getPaxCount() == paxCount).collect(Collectors.toList());
+                if (searchList.isEmpty()) {
+                    searchList = findRoomsForExtraPaxCount(new HashSet<>(rooms), paxCount);
+                }
+                if (!searchList.isEmpty()) {
+                    hotelAndRoomsMap.put(id, searchList);
+                }
+            }
+            return hotelAndRoomsMap;
+        } catch (DataAccessException e) {
+            throw new RoomServiceException("Failed to get room list by hotel ids and pax count from database.", e);
+        }
+    }
+
+    /**
+     * This method used to get room list by extra pax count.
+     * This method returns room that can occupy extra pax count : Eg: Pax count is 5 then
+     * this method will return rooms for that can occupy pax count: 6
+     *
+     * @param roomSet  roomSet
+     * @param paxCount paxCount
      * @return Room List
      */
-    public List<Room> getRooms(int paxCount, HotelIdRequestDto hotelIdRequestDto) {
+    private List<Room> findRoomsForExtraPaxCount(Set<Room> roomSet, int paxCount) {
+        List<Room> searchList = roomSet.stream()
+                .filter(room -> room.getPaxCount() >
+                        paxCount && room.getPaxCount() <= paxCount + 1)
+                .collect(Collectors.toList());
+        if (searchList.isEmpty()) {
+            Optional<Room> optionalRoom = roomSet
+                    .stream().filter(room -> room.getPaxCount() < paxCount).max(Comparator.comparing(Room::getPaxCount));
+            if (optionalRoom.isPresent()) {
+                searchList = findMultipleRoomsForPaxCount(optionalRoom.get(), roomSet, paxCount);
+            }
+        }
+        return searchList;
+    }
+
+    /**
+     * This method return the combination of rooms:
+     * Eg: PaxCount = 3 ; Then room will return pax count 1 and 2 rooms.
+     *
+     * @param maximumPaxRoom maximumPaxRoom
+     * @param roomSet        roomSet
+     * @param paxCount       paxCount
+     * @return Room List
+     */
+    public List<Room> findMultipleRoomsForPaxCount(Room maximumPaxRoom, Set<Room> roomSet, int paxCount) {
+        List<Room> searchRoomList = new ArrayList<>();
+        searchRoomList.add(maximumPaxRoom);
+        int totalPaxCount = maximumPaxRoom.getPaxCount();
+        List<Room> sortedRoomList = roomSet.stream()
+                .filter(room -> !room.equals(maximumPaxRoom))
+                .sorted(Comparator.comparing(Room::getPaxCount).reversed())
+                .collect(Collectors.toList());
+        for (Room room : sortedRoomList) {
+            int roomPaxCount = room.getPaxCount();
+            if (totalPaxCount + roomPaxCount <= paxCount) {
+                searchRoomList.add(room);
+                totalPaxCount += roomPaxCount;
+                if (totalPaxCount == paxCount) {
+                    break;
+                }
+            }
+        }
+        return totalPaxCount == paxCount ? searchRoomList : Collections.emptyList();
+    }
+
+    /**
+     * This method finds rooms by hotel id.
+     *
+     * @param hotelId hotelId
+     * @return Room List
+     */
+    public List<Room> getRoomsByHotelId(String hotelId) {
         try {
-            return roomRepository
-                    .getAllByHotelIdInAndPaxCountGreaterThanEqual(hotelIdRequestDto.getHotelIds(), paxCount);
+            return roomRepository.findByHotelId(hotelId);
         } catch (DataAccessException e) {
-            throw new RoomServiceException("Getting room list by hotel ids and pax count from database was failed.", e);
+            log.error("Failed to get room by hotel id: {}", hotelId);
+            throw new RoomServiceException("Failed to get rooms by hotel id.", e);
         }
     }
 }

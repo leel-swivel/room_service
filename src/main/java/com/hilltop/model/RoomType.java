@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -28,11 +27,11 @@ public class RoomType {
     @Id
     private String id;
     private String name;
-    private BigDecimal pricePerNight;
+    private double markupPercentage;
 
     public RoomType(RoomTypeCreateRequestDto roomTypeCreateRequestDto) {
         this.id = ROOM_ID_PREFIX + UUID.randomUUID();
         this.name = roomTypeCreateRequestDto.getRoomType();
-        this.pricePerNight = roomTypeCreateRequestDto.getPricePerNight();
+        this.markupPercentage = roomTypeCreateRequestDto.getMarkupPercentage();
     }
 }

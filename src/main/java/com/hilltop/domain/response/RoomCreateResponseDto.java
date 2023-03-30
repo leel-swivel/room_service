@@ -29,6 +29,6 @@ public class RoomCreateResponseDto extends ResponseDto {
         this.hotelId = room.getHotelId();
         this.paxCount = room.getPaxCount();
         this.imageUrls = room.getImageUrls();
-        this.roomType = new RoomTypeResponse(room.getRoomType().toString(), room.getRoomType().getPricePerNight());
+        this.roomType = new RoomTypeResponse(room.getRoomType().getId(), room.getRoomType().toString());
     }
 }

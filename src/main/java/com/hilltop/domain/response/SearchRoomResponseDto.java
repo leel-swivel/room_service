@@ -15,23 +15,17 @@ public class SearchRoomResponseDto extends ResponseDto {
     private int roomNumber;
     private String hotelId;
     private String roomTypeName;
-    private BigDecimal pricePerNight;
+    private BigDecimal costPerNight;
     private int paxCount;
     private List<String> imageUrls;
-    private BigDecimal totalCost;
 
-    public SearchRoomResponseDto(Room room, int days) {
+    public SearchRoomResponseDto(Room room) {
         this.id = room.getId();
         this.roomNumber = room.getRoomNumber();
         this.hotelId = room.getHotelId();
         this.roomTypeName = room.getRoomType().getName();
-        this.pricePerNight = room.getRoomType().getPricePerNight();
+        this.costPerNight = room.getCost();
         this.paxCount = room.getPaxCount();
         this.imageUrls = room.getImageUrls();
-        this.totalCost = calculateRoomCost(pricePerNight, days);
-    }
-
-    private BigDecimal calculateRoomCost(BigDecimal pricePerNight, int days) {
-        return pricePerNight.multiply(BigDecimal.valueOf(days));
     }
 }

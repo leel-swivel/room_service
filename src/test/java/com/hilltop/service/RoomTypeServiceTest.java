@@ -73,7 +73,6 @@ class RoomTypeServiceTest {
     private RoomTypeCreateRequestDto getSampleRoomTypeCreateRequestDto() {
         RoomTypeCreateRequestDto roomTypeCreateRequestDto = new RoomTypeCreateRequestDto();
         roomTypeCreateRequestDto.setRoomType("ONLY_BED");
-        roomTypeCreateRequestDto.setPricePerNight(BigDecimal.valueOf(5000.00));
         return roomTypeCreateRequestDto;
     }
 
