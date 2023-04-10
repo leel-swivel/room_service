@@ -58,9 +58,10 @@ class RoomServiceTest {
         verify(roomRepository, times(1)).save(any(Room.class));
     }
 
-//    @Test
+    @Test
     void Should_ThrowException_When_SavingRoom() {
         var roomCreateRequestDto = getSampleRoomCreateResponseDto();
+        when(roomTypeService.getRoomType(roomCreateRequestDto.getRoomTypeId())).thenReturn(getSampleRoomType());
         when(roomRepository.save(any(Room.class))).thenThrow(new DataAccessException("ERROR") {
         });
         RoomServiceException roomServiceException = assertThrows(RoomServiceException.class, () ->
@@ -102,10 +103,20 @@ class RoomServiceTest {
     }
 
     @Test
+    void Should_ThrowRoomServiceException_When_DeletingARoomById() {
+        Room sampleRoom = getSampleRoom();
+        sampleRoom.setId(ROOM_ID);
+        when(roomRepository.findById(ROOM_ID)).thenReturn(Optional.of(sampleRoom));
+        doThrow(new DataAccessException("ERROR") {}).when(roomRepository).delete(sampleRoom);
+        RoomServiceException roomServiceException = assertThrows(RoomServiceException.class, () ->
+                roomService.deleteRoom(ROOM_ID));
+        assertEquals("Deleting room by id " + ROOM_ID + " from database was failed.", roomServiceException.getMessage());
+    }
+
+    @Test
     void Should_ThrowException_When_DeletingARoomById() {
         Room sampleRoom = getSampleRoom();
-        doThrow(new DataAccessException("ERROR") {
-        }).when(roomRepository).delete(sampleRoom);
+        doThrow(new DataAccessException("ERROR") {}).when(roomRepository).delete(sampleRoom);
         RoomServiceException roomServiceException = assertThrows(RoomServiceException.class, () ->
                 roomService.deleteRoom(ROOM_ID));
         assertEquals("No room found for id: " + ROOM_ID, roomServiceException.getMessage());
