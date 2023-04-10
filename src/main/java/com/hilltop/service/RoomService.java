@@ -151,7 +151,7 @@ public class RoomService {
      * @param paxCount paxCount
      * @return Room List
      */
-    private List<Room> findRoomsForExtraPaxCount(Set<Room> roomSet, int paxCount) {
+    public List<Room> findRoomsForExtraPaxCount(Set<Room> roomSet, int paxCount) {
         List<Room> searchList = roomSet.stream()
                 .filter(room -> room.getPaxCount() >
                         paxCount && room.getPaxCount() <= paxCount + 1)
