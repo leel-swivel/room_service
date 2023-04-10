@@ -103,12 +103,12 @@ public class RoomService {
      * @param roomCreateRequestDto roomCreateRequestDto
      * @return Room
      */
-    public Room updateRoom(String id, RoomCreateRequestDto roomCreateRequestDto) {
+    public void updateRoom(String id, RoomCreateRequestDto roomCreateRequestDto) {
         try {
             Room room = getRoom(id);
             var roomType = roomTypeService.getRoomType(roomCreateRequestDto.getRoomTypeId());
             room.update(roomCreateRequestDto, roomType);
-            return roomRepository.save(room);
+            roomRepository.save(room);
         } catch (DataAccessException e) {
             throw new RoomServiceException("Updating room by id " + id + ERROR_MESSAGE, e);
         }

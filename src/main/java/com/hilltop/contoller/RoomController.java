@@ -139,9 +139,8 @@ public class RoomController extends Controller {
                 log.error("Missing required filed to save a room.");
                 return getErrorResponse(ErrorResponseStatusType.MISSING_REQUIRED_FIELDS);
             }
-            Room room = roomService.updateRoom(roomId, roomCreateRequestDto);
-            RoomResponseDto roomResponseDto = new RoomResponseDto(room);
-            return getSuccessResponse(roomResponseDto, SuccessResponseStatusType.UPDATE_ROOM, HttpStatus.OK);
+            roomService.updateRoom(roomId, roomCreateRequestDto);
+            return getSuccessResponse(null, SuccessResponseStatusType.UPDATE_ROOM, HttpStatus.OK);
         } catch (InvalidRoomException e) {
             log.error("Invalid room id to update room details.");
             return getErrorResponse(ErrorResponseStatusType.INVALID_ROOM_ID);

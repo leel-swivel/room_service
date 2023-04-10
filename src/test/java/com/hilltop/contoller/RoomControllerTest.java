@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -42,7 +42,6 @@ class RoomControllerTest {
     private static final String GET_ROOM_LIST_FOR_HOTEL = "/api/v1/room/hotel/{hotelId}/page/{page}/size/{size}";
     private static final int PAGE_NO = 0;
     private static final int SIZE = 1;
-    private static final int DAYS = 2;
 
     @Mock
     private RoomService roomService;
@@ -66,8 +65,18 @@ class RoomControllerTest {
         RoomCreateRequestDto sampleRoomCreateRequestDto = getSampleRoomCreateRequestDto();
         mockMvc.perform(MockMvcRequestBuilders.post(CREATE_ROOM_URL)
                         .content(sampleRoomCreateRequestDto.toLogJson())
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());;
+
+    }
+
+    @Test
+    void Should_ReturnOk_When_UpdatingARoom() throws Exception{
+        RoomCreateRequestDto sampleRoomCreateRequestDto = getSampleRoomCreateRequestDto();
+        String url = UPDATE_ROOM_BY_ID_URL.replace("{id}", ROOM_ID);
+        mockMvc.perform(MockMvcRequestBuilders.put(url).content(sampleRoomCreateRequestDto.toLogJson())
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -180,7 +189,10 @@ class RoomControllerTest {
 
     private Room generateRoom() {
         RoomCreateRequestDto sampleRoomCreateRequestDto = getSampleRoomCreateRequestDto();
-        return new Room(sampleRoomCreateRequestDto, new RoomType("id-gejakjg", "SINGLE", 52.0));
+        Room room = new Room(sampleRoomCreateRequestDto, new RoomType("id-gejakjg", "SINGLE", 52.0));
+        room.setId(ROOM_ID);
+        room.setPricePerNight(BigDecimal.valueOf(500.00));
+        return room;
     }
 
     private Page<Room> getRoomPage() {
@@ -199,12 +211,4 @@ class RoomControllerTest {
         return hotelIdRequestDto;
     }
 
-
-//    private HotelIdRequestDto getSampleHotelIdRequestDto(){
-//        HotelIdRequestDto hotelIdRequestDto = new HotelIdRequestDto();
-//        hotelIdRequestDto.getHotelIds().add("aghejgh");
-//        hotelIdRequestDto.getHotelIds().add("aghejgh");
-//        hotelIdRequestDto.getHotelIds().add("aghejgh");
-//        return hotelIdRequestDto;
-//    }
 }
