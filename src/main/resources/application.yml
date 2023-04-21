@@ -28,4 +28,4 @@ logging:
   level:
     com.hilltop: ${LOG_LEVEL:DEBUG}
   file:
-    path: ${LOGPATH:/home/ubuntu/log}
+    path: ${LOG-PATH:/home/ubuntu/log}

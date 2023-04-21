@@ -196,7 +196,7 @@ class RoomServiceTest {
         List<Room> searchList = new ArrayList<>();
         searchList.add(room2);
         expected.put("hid-456", searchList);
-        Map<String, List<Room>> result = roomService.getRoomsForPaxCountAndHotelIds(2, hotelIdRequestDto);
+        Map<String, List<Room>> result = roomService.getRoomsForPaxCountAndHotelIds(2, hotelIdRequestDto.getHotelIds());
         assertEquals(expected, result);
     }
 
