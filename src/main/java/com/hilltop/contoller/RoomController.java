@@ -1,7 +1,6 @@
 package com.hilltop.contoller;
 
 import com.hilltop.configuration.Translator;
-import com.hilltop.domain.request.HotelIdRequestDto;
 import com.hilltop.domain.request.RoomCreateRequestDto;
 import com.hilltop.domain.response.RoomListPageResponseDto;
 import com.hilltop.domain.response.RoomListResponseDto;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 /**
  * RoomController
@@ -92,10 +92,10 @@ public class RoomController extends Controller {
      * @param size    size
      * @return roomListPageResponseDto
      */
-    @GetMapping("/hotel/{hotelId}/page/{page}/size/{size}")
+    @GetMapping("/hotel/{hotelId}")
     public ResponseEntity<ResponseWrapper> getRoomListForHotel(@PathVariable String hotelId,
-                                                               @Min(DEFAULT_PAGE) @PathVariable int page,
-                                                               @Positive @Max(PAGE_MAX_SIZE) @PathVariable int size) {
+                                                               @Min(DEFAULT_PAGE) @RequestParam int page,
+                                                               @Positive @Max(PAGE_MAX_SIZE) @RequestParam int size) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(DEFAULT_SORT).descending());
             Page<Room> roomPageByHotelId = roomService.getRoomPageByHotelId(pageable, hotelId);
@@ -156,17 +156,17 @@ public class RoomController extends Controller {
     /**
      * This endpoint used to get hotel room for the search.
      *
-     * @param count             count
-     * @param days              days
-     * @param hotelIdRequestDto hotelIdRequestDto
+     * @param count    count
+     * @param days     days
+     * @param hotelIds hotelIds
      * @return searchRoomListResponseDto
      */
-    @PostMapping("/list-hotel-room-by")
+    @GetMapping("/list-hotel-room-by")
     public ResponseEntity<ResponseWrapper> getHotelRooms(@RequestParam int count,
                                                          @RequestParam int days,
-                                                         @RequestBody HotelIdRequestDto hotelIdRequestDto) {
+                                                         @RequestParam List<String> hotelIds) {
         try {
-            var rooms = roomService.getRoomsForPaxCountAndHotelIds(count, hotelIdRequestDto);
+            var rooms = roomService.getRoomsForPaxCountAndHotelIds(count, hotelIds);
             RoomListResponseDto roomListResponseDto = new RoomListResponseDto(rooms, days);
             log.info("Successfully returned the hotel rooms for pax count :{} and day count: {} ", count, days);
             return getSuccessResponse(roomListResponseDto, SuccessResponseStatusType.SEARCH_ROOMS, HttpStatus.OK);

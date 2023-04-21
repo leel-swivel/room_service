@@ -119,13 +119,13 @@ public class RoomService {
      * This method returns room list for exact pax count by iterating all hotelId list.
      *
      * @param paxCount          paxCount
-     * @param hotelIdRequestDto hotelIdRequestDto
+     * @param hotelIds hotelIds
      * @return hotel id vs room list map
      */
-    public Map<String, List<Room>> getRoomsForPaxCountAndHotelIds(int paxCount, HotelIdRequestDto hotelIdRequestDto) {
+    public Map<String, List<Room>> getRoomsForPaxCountAndHotelIds(int paxCount, List<String> hotelIds) {
         try {
             Map<String, List<Room>> hotelAndRoomsMap = new HashMap<>();
-            for (String id : hotelIdRequestDto.getHotelIds()) {
+            for (String id : hotelIds) {
                 List<Room> rooms = getRoomsByHotelId(id);
                 List<Room> searchList = rooms
                         .stream().filter(room -> room.getPaxCount() == paxCount).collect(Collectors.toList());
